@@ -12,13 +12,12 @@ contract Faucet {
     receive() external payable {}
 
     function addFunds() external payable {
-        uint index = num0fFunders++;
         address funder = msg.sender;
 
         if (!funders[funder]) {
             numOfFunders++;
             funders[funder] = true;
-            lutFunders[index]
+            lutFunders[numOfFunders] = funder;
         }
     }
 
