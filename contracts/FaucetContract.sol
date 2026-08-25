@@ -1,13 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
+import "./Owned.sol";
+import "./Logger.sol";
 
-contract Faucet {
+contract Faucet is Owned {
 
     uint public num0fFunders;
+
     mapping(address => bool) private funders;
     mapping(address => address) private lutFunders;
     // private -> can be accesible only within the smart contract
     // internal -> can be accesible within smart contract and also derived smart contract
+
+
 
     modifier limitWithdraw(uint withdrawAmount) {
         require(
@@ -20,6 +25,10 @@ contract Faucet {
 
 
     receive() external payable {}
+
+    function emitLog() public override pure returns(bytes32) {
+        return "Hello World";
+    }
 
     function addFunds() external payable {
         address funder = msg.sender;
