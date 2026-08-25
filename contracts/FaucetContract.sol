@@ -50,7 +50,6 @@ contract Faucet is Owned {
     }
 
     function withdraw(uint withdrawAmount) external limitWithdraw(withdrawAmount){
-        require(withdrawAmount <= 100000000000000000, "Cannot withdraw more than 0.1 ether")
         payable(msg.sender).transfer(withdrawAmount);
     }
 
