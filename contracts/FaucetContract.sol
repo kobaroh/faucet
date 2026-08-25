@@ -33,6 +33,8 @@ contract Faucet is Owned {
 
     function addFunds() external payable {
         address funder = msg.sender;
+        test3(); 
+
 
         if (!funders[funder]) {
             numOfFunders++;
