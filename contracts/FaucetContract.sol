@@ -9,6 +9,16 @@ contract Faucet {
     // private -> can be accesible only within the smart contract
     // internal -> can be accesible within smart contract and also derived smart contract
 
+    modifier limitWithdraw(uint withdrawAmount) {
+        require(
+            withdrawAmount  < 100000000000000000,
+            "Cannot withdraw more than 0.1 ether "
+            );
+            _;
+        
+    }
+
+
     receive() external payable {}
 
     function addFunds() external payable {
@@ -19,6 +29,19 @@ contract Faucet {
             funders[funder] = true;
             lutFunders[numOfFunders] = funder;
         }
+    }
+
+    function test1() external {
+        // some managing stuff that only admin should have access to
+    }
+
+    function test2() external {
+        // some managing stuff that only admin should have access to
+    }
+
+    function withdraw(uint withdrawAmount) external limitWithdraw(withdrawAmount){
+        require(withdrawAmount <= 100000000000000000, "Cannot withdraw more than 0.1 ether")
+        payable(msg.sender).transfer(withdrawAmount);
     }
 
     function getAllFunders() external view returns (address[] memory) {
