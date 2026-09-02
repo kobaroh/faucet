@@ -1,8 +1,11 @@
-
-
 .faucet-wrapper {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttons-row {
+  margin-top: 1rem;
 }
