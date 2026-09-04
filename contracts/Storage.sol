@@ -5,7 +5,7 @@ pragma solidity >=0.4.22 <0.9.0;
 contract Storage {
 
     // keccak256(key . slot)
-    mapping(unit => uint) public aa; // slot 0
+    mapping(uint => uint) public aa; // slot 0
     mapping(address => uint) public bb; // slot 1
 
     //keccak256(slot) + index of the item
@@ -13,7 +13,7 @@ contract Storage {
 
     uint8 public a = 7; // 1 byte
     uint16 public b = 10; //2 bytes
-    address public c = 
+    address public c;
     bool d = true; // 1 byte
     uint64 public e = 15; // 8 bytes
 

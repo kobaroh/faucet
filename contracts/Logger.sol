@@ -7,7 +7,7 @@ pragma solidity >=0.4.22 <0.9.0;
 
 abstract contract Logger {
 
-    uint public testNum:
+    uint public testNum;
 
     constructor() {
         testNum = 1000;
@@ -19,7 +19,7 @@ abstract contract Logger {
         return 100;
     }
 
-    functionn test5() external pure returns(uint) {
+    function test5() external pure returns(uint) {
         test3();
         return 10;
     }

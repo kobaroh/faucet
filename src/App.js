@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import "./App.css";
 import Web3 from "web3";
+import detectEthereumProvider from '@metamask/detect-provider';
 
 function App() {
   const [web3Api, setWeb3Api] = useState({
@@ -11,28 +12,16 @@ function App() {
 
   useEffect(() => {
     const loadProvider = async () => {
-      let provider = null;
+      const provider = await detectEthereumProvider()
 
-      if (window.ethereum) {
-        provider = window.ethereum;
-
-        try {
-          await provider.enable(); 
-        } catch {
-          console.error("User denied accounts access!")
-        }
-      } 
-      else if (window.web3) {
-        provider = window.web3.currentProvider
-      }
-        else if (!process.env.production) {
-          provider = new Web3.providers.HttpProvider("http://localhost:7545")
-        }
-
+      if (provider) {
         setWeb3Api({
           web3: new Web3(provider),
           provider
         })
+      } else {
+        console.error("Please, install Metamask")
+      }
     }
 
     loadProvider();
@@ -50,17 +39,29 @@ function App() {
   return (
     <div className="faucet-wrapper">
       <div className="faucet">
-        <span>
-          <strong>Account: </strong>
-        </span>
-        <h1>
-          { account ? account : "not connected" }
-        </h1>
-        <div className="balance-view is-size-2">
+        <div className="is-flex is-align-items-center">
+          <span>
+            <strong className="mr-2">Account: </strong>
+          </span>
+            { account ? 
+              <div>{account}</div> :
+              <button 
+                className="button is-small"
+                onClick={() => 
+                  web3Api.provider.request({method: "eth_requestAccounts"}
+                )}
+              >
+                Connect Wallet
+              </button>
+            }
+        </div>
+        <div className="balance-view is-size-2 my-4">
         Current Balance: <strong>10</strong> ETH
         </div>
-        <button className="button is-primary is-small mr-4">Donate</button>
-        <button className="button is-danger is-small">Withdraw</button>
+        <button
+         className="button is-primary is-small mr-4">Donate</button>
+        <button 
+        className="button is-danger is-small">Withdraw</button>
       </div>
     </div>
   );

@@ -4,26 +4,20 @@ import "./Owned.sol";
 import "./Logger.sol";
 import "./IFaucet.sol";
 
-contract Faucet is Owned {
+contract Faucet is Owned, Logger {
 
-    uint public num0fFunders;
+    uint public numOfFunders;
 
     mapping(address => bool) private funders;
-    mapping(address => address) private lutFunders;
-    // private -> can be accesible only within the smart contract
-    // internal -> can be accesible within smart contract and also derived smart contract
-
-
+    mapping(uint => address) private lutFunders;
 
     modifier limitWithdraw(uint withdrawAmount) {
         require(
-            withdrawAmount  < 100000000000000000,
+            withdrawAmount < 100000000000000000,
             "Cannot withdraw more than 0.1 ether "
-            );
-            _;
-        
+        );
+        _;
     }
-
 
     receive() external payable {}
 
@@ -33,8 +27,6 @@ contract Faucet is Owned {
 
     function addFunds() external payable {
         address funder = msg.sender;
-        test3(); 
-
 
         if (!funders[funder]) {
             numOfFunders++;
@@ -51,23 +43,21 @@ contract Faucet is Owned {
         // some managing stuff that only admin should have access to
     }
 
-    function withdraw(uint withdrawAmount) external limitWithdraw(withdrawAmount){
+    function withdraw(uint withdrawAmount) external limitWithdraw(withdrawAmount) {
         payable(msg.sender).transfer(withdrawAmount);
     }
 
     function getAllFunders() external view returns (address[] memory) {
-        address[] memory_founders = new address[](numOfFunders);
+        address[] memory _founders = new address[](numOfFunders);
 
-        for (unit i = 0; i < numOfFunders; i++) {
-            _funders[i] = funders[];
-
-            return _funders;
+        for (uint i = 0; i < numOfFunders; i++) {
+            _founders[i] = lutFunders[i];
         }
+
+        return _founders;
     }
 
     function getFunderAtIndex(uint8 index) external view returns (address) {
-    return funders[index]; 
-    } 
-
-    
+        return lutFunders[index];
+    }
 }
