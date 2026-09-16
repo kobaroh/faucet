@@ -1,23 +1,30 @@
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import "./App.css";
 import Web3 from "web3";
 import detectEthereumProvider from '@metamask/detect-provider';
+import { loadContract } from "./utils/load-contract";
 
 function App() {
   const [web3Api, setWeb3Api] = useState({
     provider: null,
-    web3: null
+    web3: null,
+    contract: null
   })
+
+  const [balance, setBallance] = useState(null)
   const [account, setAccount] = useState(null)
+  const []
 
   useEffect(() => {
     const loadProvider = async () => {
       const provider = await detectEthereumProvider()
+      const contract = await loadContract("Faucet", provider)
 
       if (provider) {
         setWeb3Api({
           web3: new Web3(provider),
-          provider
+          provider,
+          contract
         })
       } else {
         console.error("Please, install Metamask")
@@ -28,6 +35,16 @@ function App() {
   }, [])
 
   useEffect(() => {
+    const loadBalance = async () => {
+      const { contract, web3 } = web3Api
+      const balance = await web3.eth.getBalance(contract.address)
+      setBallance(web3.utils.fromWei(balance, "ether"))
+    }
+
+    web3Api.contract && loadBalance()
+  }, [web3Api])
+
+  useEffect(() => {
     const getAccount = async () => {
       const accounts = await web3Api.web3.eth.getAccounts()
       setAccount(accounts[0])
@@ -35,6 +52,16 @@ function App() {
 
     web3Api.web3 && getAccount()
   }, [web3Api.web3])
+
+  const addFunds = useCallback(async () => {
+    const { contract, web3 } = web3Api
+    await contract.addFunds({
+      from: account,
+      value: web3.utils.toWei(1, "ether")
+    })
+
+    window.location.reload()
+  }, [web3Api, account])
 
   return (
     <div className="faucet-wrapper">
@@ -56,10 +83,13 @@ function App() {
             }
         </div>
         <div className="balance-view is-size-2 my-4">
-        Current Balance: <strong>10</strong> ETH
+        Current Balance: <strong>{balance}</strong> ETH
         </div>
         <button
-         className="button is-primary is-small mr-4">Donate</button>
+        onClick={addFunds}
+         className="button is-primary is-small mr-4">
+          Donate 1eth
+          </button>
         <button 
         className="button is-danger is-small">Withdraw</button>
       </div>
