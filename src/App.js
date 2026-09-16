@@ -13,7 +13,13 @@ function App() {
 
   const [balance, setBallance] = useState(null)
   const [account, setAccount] = useState(null)
-  const []
+  const [shouldReload, reload] = useState(false)
+
+  const reloadEffect = useCallback(() => reload(!shouldReload), [shouldReload])
+
+  const setAccountListener = (provider) => {
+    provider.on("accountsChanged", accounts => setAccount(accounts[0]))
+  }
 
   useEffect(() => {
     const loadProvider = async () => {
@@ -21,6 +27,7 @@ function App() {
       const contract = await loadContract("Faucet", provider)
 
       if (provider) {
+        setAccountListener(provider)
         setWeb3Api({
           web3: new Web3(provider),
           provider,
@@ -42,7 +49,7 @@ function App() {
     }
 
     web3Api.contract && loadBalance()
-  }, [web3Api])
+  }, [web3Api, shouldReload])
 
   useEffect(() => {
     const getAccount = async () => {
@@ -57,11 +64,21 @@ function App() {
     const { contract, web3 } = web3Api
     await contract.addFunds({
       from: account,
-      value: web3.utils.toWei(1, "ether")
+      value: web3.utils.toWei("1", "ether")
     })
 
-    window.location.reload()
-  }, [web3Api, account])
+    // window.location.reload()
+    reloadEffect()
+  }, [web3Api, account, reloadEffect])
+
+  const withdraw = async () => {
+    const { contract, web3 } = web3Api
+    const withdrawAmount = web3.utils.toWei("0.1", "ether")
+    await contract.withdraw(withdrawAmount, {
+      from: account
+    })
+    reloadEffect()
+  }
 
   return (
     <div className="faucet-wrapper">
@@ -91,6 +108,7 @@ function App() {
           Donate 1eth
           </button>
         <button 
+        onClick={withdraw}
         className="button is-danger is-small">Withdraw</button>
       </div>
     </div>
