@@ -16,10 +16,12 @@ function App() {
   const [account, setAccount] = useState(null)
   const [shouldReload, reload] = useState(false)
 
+  const canConnectToContract = account && web3Api.contract
   const reloadEffect = useCallback(() => reload(!shouldReload), [shouldReload])
 
   const setAccountListener = (provider) => {
     provider.on("accountsChanged", _ => window.location.reload())
+    provider.on("chainChanged", _ => window.location.reload())
 
   }
 
@@ -121,16 +123,23 @@ function App() {
         <div className="balance-view is-size-2 my-4">
         Current Balance: <strong>{balance}</strong> ETH
         </div>
+        { !canConnectToContract &&
+          <i className="is-block">
+            Connect to Ganache
+          </i>
+        
+          
+        }
         <button
-        disabled={!account}
-        onClick={addFunds}
-         className="button is-primary is-small mr-4">
-          Donate 1eth
+          disabled={!canConnectToContract}
+          onClick={addFunds}
+          className="button is-primary is-small mr-4">
+            Donate 1eth
           </button>
         <button 
-        disabled={!account}
-        onClick={withdraw}
-        className="button is-danger is-small">Withdraw</button>
+          disabled={!canConnectToContract}
+          onClick={withdraw}
+          className="button is-danger is-small">Withdraw 0.1 eth</button>
       </div>
     </div>
   );
